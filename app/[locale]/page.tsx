@@ -23,7 +23,7 @@ export default async function Page({ params }: PageProps) {
     notFound()
   }
 
-  const locale = routeLocale
+  const locale: Locale = routeLocale
   const t = translations[locale]
 
   return (
@@ -34,7 +34,7 @@ export default async function Page({ params }: PageProps) {
       <div className="absolute inset-0 z-0 h-full w-full bg-zinc-950 bg-[radial-gradient(#52525b_1px,transparent_1px)] [background-size:20px_20px]">
         <div className="absolute inset-0 bg-zinc-950 [mask-image:radial-gradient(ellipse_at_center,transparent_20%,black_80%)]" />
       </div>
-      { /* <ParticleBackground /> */}
+      {/* <ParticleBackground /> */}
       <div className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(ellipse_at_center,transparent,rgba(9,9,11,0.4)_60%,rgb(9,9,11))]" />
 
       <main className="relative z-10 mt-[-5vh] flex w-full max-w-4xl flex-col items-center px-4 text-center sm:px-6">
@@ -46,12 +46,10 @@ export default async function Page({ params }: PageProps) {
           <span className="uppercase tracking-wide">{t.statusBadge}</span>
         </div>
 
-        
         <div className="relative z-20 mb-8 flex w-full flex-col items-center">
           <p className="mb-6 text-center text-sm font-medium uppercase tracking-widest text-zinc-400 sm:text-base md:text-lg">
             {t.subheading}
           </p>
-          
           <div className="mb-4">
             <FlipBoard word={t.headlineWord} />
           </div>
@@ -70,14 +68,12 @@ export default async function Page({ params }: PageProps) {
           <span className="animate-squiggly font-semibold text-zinc-100">{t.descriptionHighlight}</span>
           {t.descriptionEnd}
         </p>
-
         <ContactForm
           contactLabel={t.contactLabel}
           contactPlaceholder={t.contactPlaceholder}
           submitButton={t.submitButton}
           confirmationMessage={t.confirmationMessage}
         />
-
       </main>
     </div>
   )
