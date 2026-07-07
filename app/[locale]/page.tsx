@@ -69,10 +69,17 @@ export default async function Page({ params }: PageProps) {
           {t.descriptionEnd}
         </p>
         <ContactForm
-          contactLabel={t.contactLabel}
-          contactPlaceholder={t.contactPlaceholder}
+          locale={locale}
+          emailLabel={t.emailLabel}
+          emailPlaceholder={t.emailPlaceholder}
+          phoneLabel={t.phoneLabel}
+          phonePlaceholder={t.phonePlaceholder}
+          messageLabel={t.messageLabel}
+          messagePlaceholder={t.messagePlaceholder}
           submitButton={t.submitButton}
+          submittingButton={t.submittingButton}
           confirmationMessage={t.confirmationMessage}
+          errorMessage={t.errorMessage}
         />
       </main>
     </div>

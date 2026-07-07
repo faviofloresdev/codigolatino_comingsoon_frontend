@@ -14,6 +14,19 @@ npm install
 npm run dev
 ```
 
+## Configuracion del formulario de contacto
+
+Para habilitar el envio de correos con Resend, define estas variables de entorno:
+
+```bash
+RESEND_API_KEY=tu_api_key
+CONTACT_TO_EMAIL=tu-correo@dominio.com
+CONTACT_FROM_EMAIL=Codigo Latino <onboarding@resend.dev>
+```
+
+- `CONTACT_TO_EMAIL`: correo que recibira los mensajes del formulario.
+- `CONTACT_FROM_EMAIL`: remitente usado por Resend. En produccion conviene usar un dominio verificado.
+
 ## Build de produccion
 
 ```bash

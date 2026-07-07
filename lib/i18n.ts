@@ -11,9 +11,14 @@ type Translation = {
   descriptionHighlight: string
   descriptionEnd: string
   logoAlt: string
-  contactLabel: string
-  contactPlaceholder: string
+  emailLabel: string
+  emailPlaceholder: string
+  phoneLabel: string
+  phonePlaceholder: string
+  messageLabel: string
+  messagePlaceholder: string
   submitButton: string
+  submittingButton: string
   metaTitle: string
   metaDescription: string
   notFoundBadge: string
@@ -25,6 +30,7 @@ type Translation = {
   backHome: string
   retryButton: string
   confirmationMessage: string
+  errorMessage: string
 }
 
 export const translations: Record<Locale, Translation> = {
@@ -35,12 +41,17 @@ export const translations: Record<Locale, Translation> = {
     descriptionStart: 'Estamos construyendo una ',
     descriptionHighlight: 'nueva experiencia digital',
     descriptionEnd:
-      '. Mientras tanto, dejanos tu correo o numero de telefono y te contactaremos para ayudarte con lo que necesites.',
+      '. Mientras tanto, dejanos tu correo, tu numero de telefono y un mensaje para ayudarte con lo que necesites.',
     logoAlt: 'Logo de la empresa',
-    contactLabel: 'Correo o numero de contacto',
-    contactPlaceholder: 'Correo o numero de contacto',
+    emailLabel: 'Correo electronico',
+    emailPlaceholder: 'Correo electronico',
+    phoneLabel: 'Numero de telefono',
+    phonePlaceholder: 'Numero de telefono',
+    messageLabel: 'Mensaje',
+    messagePlaceholder: 'Cuentanos en que podemos ayudarte',
     submitButton: 'Enviar',
-    metaTitle: 'En remodelacion · Proximamente',
+    submittingButton: 'Enviando...',
+    metaTitle: 'En remodelacion | Proximamente',
     metaDescription:
       'Estamos construyendo una nueva experiencia digital. Vuelve pronto para descubrir algo especial.',
     notFoundBadge: 'Error 404',
@@ -53,7 +64,8 @@ export const translations: Record<Locale, Translation> = {
       'Ocurrio un problema inesperado mientras cargabamos esta vista. Puedes intentarlo de nuevo o regresar al inicio.',
     backHome: 'Volver al inicio',
     retryButton: 'Reintentar',
-    confirmationMessage: 'Gracias. Recibimos tu contacto y te responderemos pronto.',
+    confirmationMessage: 'Gracias. Recibimos tu mensaje y te responderemos pronto.',
+    errorMessage: 'No pudimos enviar tu mensaje. Intentalo nuevamente en unos minutos.',
   },
   en: {
     statusBadge: 'Coming soon',
@@ -62,12 +74,17 @@ export const translations: Record<Locale, Translation> = {
     descriptionStart: 'We are building a ',
     descriptionHighlight: 'new digital experience',
     descriptionEnd:
-      '. In the meantime, leave us your email or phone number and we will contact you to help with anything you need.',
+      '. In the meantime, leave us your email, phone number, and a message so we can help with anything you need.',
     logoAlt: 'Company logo',
-    contactLabel: 'Email or contact number',
-    contactPlaceholder: 'Email or contact number',
+    emailLabel: 'Email address',
+    emailPlaceholder: 'Email address',
+    phoneLabel: 'Phone number',
+    phonePlaceholder: 'Phone number',
+    messageLabel: 'Message',
+    messagePlaceholder: 'Tell us how we can help',
     submitButton: 'Send',
-    metaTitle: 'Remodeling · Coming Soon',
+    submittingButton: 'Sending...',
+    metaTitle: 'Remodeling | Coming Soon',
     metaDescription:
       'We are building a new digital experience. Check back soon to discover something special.',
     notFoundBadge: 'Error 404',
@@ -80,7 +97,8 @@ export const translations: Record<Locale, Translation> = {
       'An unexpected issue occurred while loading this view. You can try again or return to the homepage.',
     backHome: 'Back to home',
     retryButton: 'Try again',
-    confirmationMessage: 'Thanks. We received your contact details and will reach out soon.',
+    confirmationMessage: 'Thanks. We received your message and will reach out soon.',
+    errorMessage: 'We could not send your message. Please try again in a few minutes.',
   },
 }
 
