@@ -1,19 +1,30 @@
-import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { IBM_Plex_Mono, Manrope, Sora } from 'next/font/google'
+import { CustomCursor } from '@/components/custom-cursor'
 import './globals.css'
 
-const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const heading = Sora({
+  variable: '--font-display',
   subsets: ['latin'],
+  weight: ['500', '600', '700', '800'],
+})
+
+const body = Manrope({
+  variable: '--font-body',
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700'],
+})
+
+const mono = IBM_Plex_Mono({
+  variable: '--font-mono',
+  subsets: ['latin'],
+  weight: ['400', '500'],
 })
 
 export const metadata: Metadata = {
-  title: 'En Remodelación · Próximamente',
+  title: 'Codigo Latino | Web a medida, hosting y branding',
   description:
-    'Estamos construyendo una nueva experiencia digital. Vuelve pronto para descubrir algo especial.',
-  generator: 'v0.app',
+    'Creamos sitios web, branding y hosting administrado para negocios que necesitan una presencia digital clara, mantenible y lista para crecer.',
   icons: {
     icon: [
       {
@@ -35,7 +46,7 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   colorScheme: 'dark',
-  themeColor: '#09090b',
+  themeColor: '#1c1c1c',
 }
 
 export default function RootLayout({
@@ -44,10 +55,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} bg-zinc-950`}>
+    <html lang="es" className={`${heading.variable} ${body.variable} ${mono.variable} bg-[var(--brand-paper)]`}>
       <body className="font-sans antialiased">
         {children}
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+        <CustomCursor />
       </body>
     </html>
   )
