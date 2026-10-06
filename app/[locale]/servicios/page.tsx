@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { Reveal } from '@/components/reveal'
 import { SiteShell } from '@/components/site-shell'
 import { Locale, isLocale, translations } from '@/lib/i18n'
+import { buildPageMetadata } from '@/lib/seo'
 
 interface PageProps {
   params: Promise<{ locale: string }>
@@ -12,12 +13,14 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale: routeLocale } = await params
   const locale: Locale = isLocale(routeLocale) ? routeLocale : 'es'
-  return {
-    title: locale === 'es' ? 'Servicios digitales | Codigo Latino' : 'Digital services | Codigo Latino',
+  return buildPageMetadata({
+    locale,
+    path: '/servicios',
+    title: locale === 'es' ? 'Servicios digitales | Código Latino' : 'Digital services | Codigo Latino',
     description: locale === 'es'
       ? 'Desarrollo web y de aplicaciones, hosting administrado, mantenimiento y branding para negocios en crecimiento.'
       : 'Web and application development, managed hosting, maintenance and branding for growing businesses.',
-  }
+  })
 }
 
 const servicePageCopy: Record<

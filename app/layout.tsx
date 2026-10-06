@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { IBM_Plex_Mono, Manrope, Sora } from 'next/font/google'
+import { headers } from 'next/headers'
 import { CustomCursor } from '@/components/custom-cursor'
 import './globals.css'
 
@@ -22,26 +23,20 @@ const mono = IBM_Plex_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Codigo Latino | Web a medida, hosting y branding',
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://www.codigolatino.studio'),
+  title: 'Código Latino | Web a medida, hosting y branding',
   description:
     'Creamos sitios web, branding y hosting administrado para negocios que necesitan una presencia digital clara, mantenible y lista para crecer.',
   icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
+    icon: [{ url: '/favicon.png', type: 'image/png', sizes: '512x512' }],
+    shortcut: '/favicon.png',
+    apple: [{ url: '/favicon.png', type: 'image/png', sizes: '512x512' }],
   },
+  applicationName: 'Código Latino',
+  authors: [{ name: 'Código Latino', url: 'https://www.codigolatino.studio' }],
+  creator: 'Código Latino',
+  publisher: 'Código Latino',
+  category: 'technology',
 }
 
 export const viewport: Viewport = {
@@ -49,13 +44,16 @@ export const viewport: Viewport = {
   themeColor: '#1c1c1c',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const requestHeaders = await headers()
+  const locale = requestHeaders.get('x-site-locale') === 'en' ? 'en' : 'es'
+
   return (
-    <html lang="es" className={`${heading.variable} ${body.variable} ${mono.variable} bg-[var(--brand-paper)]`}>
+    <html lang={locale} className={`${heading.variable} ${body.variable} ${mono.variable} bg-[var(--brand-paper)]`}>
       <body className="font-sans antialiased">
         {children}
         <CustomCursor />

@@ -4,6 +4,7 @@ import { ProjectCalculator } from '@/components/project-calculator'
 import { ProjectProcess } from '@/components/project-process'
 import { SiteShell } from '@/components/site-shell'
 import { Locale, isLocale } from '@/lib/i18n'
+import { buildPageMetadata } from '@/lib/seo'
 
 interface PageProps {
   params: Promise<{ locale: string }>
@@ -12,10 +13,12 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale: routeLocale } = await params
   const locale: Locale = isLocale(routeLocale) ? routeLocale : 'es'
-  return {
-    title: locale === 'es' ? 'Calculadora de proyectos | Codigo Latino' : 'Project calculator | Codigo Latino',
+  return buildPageMetadata({
+    locale,
+    path: '/calculadora',
+    title: locale === 'es' ? 'Calculadora de proyectos | Código Latino' : 'Project calculator | Codigo Latino',
     description: locale === 'es' ? 'Estima el alcance y la inversión inicial de tu próximo proyecto digital.' : 'Estimate the initial scope and investment for your next digital project.',
-  }
+  })
 }
 
 export default async function CalculatorPage({ params }: PageProps) {
