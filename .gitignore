@@ -21,3 +21,19 @@ coverage/
 *.log
 *.tsbuildinfo
 .DS_Store
+Thumbs.db
+
+# Local development and agent configuration
+.agents/
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Test and generated artifacts
+tmp/
+output/
+test-results/
+playwright-report/
+screenshots/
+downloads/
