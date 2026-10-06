@@ -1,6 +1,6 @@
-# Codigo Latino Coming Soon Frontend
+# Codigo Latino Website
 
-Landing page "coming soon" construida con Next.js 16 y React 19 para Codigo Latino.
+Sitio bilingüe de Codigo Latino construido con Next.js 16, React 19 y Tailwind CSS 4.
 
 ## Requisitos
 
@@ -14,28 +14,33 @@ npm install
 npm run dev
 ```
 
-## Configuracion del formulario de contacto
+El sitio estará disponible en `http://localhost:3000` y redirigirá a `/es` o `/en` según el idioma del navegador.
 
-Para habilitar el envio de correos con Resend, define estas variables de entorno:
+## Variables de entorno
+
+Crea un archivo `.env.local` a partir de `.env.example` y configura:
 
 ```bash
 RESEND_API_KEY=tu_api_key
 CONTACT_TO_EMAIL=tu-correo@dominio.com
-CONTACT_FROM_EMAIL=Codigo Latino <onboarding@resend.dev>
+CONTACT_FROM_EMAIL=Codigo Latino <contacto@tu-dominio.com>
+NEXT_PUBLIC_RECAPTCHA_SITE_KEY=tu_site_key_de_recaptcha_v3
+RECAPTCHA_SECRET_KEY=tu_secret_key_de_recaptcha_v3
+RECAPTCHA_MIN_SCORE=0.5
 ```
 
-- `CONTACT_TO_EMAIL`: correo que recibira los mensajes del formulario.
-- `CONTACT_FROM_EMAIL`: remitente usado por Resend. En produccion conviene usar un dominio verificado.
+- `CONTACT_TO_EMAIL`: destino de las consultas y solicitudes de proyecto.
+- `CONTACT_FROM_EMAIL`: remitente autorizado en Resend. En producción debe usar un dominio verificado.
+- `NEXT_PUBLIC_RECAPTCHA_SITE_KEY`: clave pública de Google reCAPTCHA v3.
+- `RECAPTCHA_SECRET_KEY`: clave privada utilizada únicamente por el endpoint del servidor.
+- `RECAPTCHA_MIN_SCORE`: puntuación mínima aceptada para los envíos.
 
-## Build de produccion
+## Verificación y producción
 
 ```bash
+npm run typecheck
 npm run build
 npm run start
 ```
 
-## Notas
-
-- Este repositorio usa `npm` como gestor principal de paquetes.
-- Los artefactos generados como `.next`, `node_modules` y `*.tsbuildinfo` estan excluidos de Git.
-- Si vas a subirlo a GitHub por primera vez, puedes inicializar el repo con `git init`, crear tu rama principal y luego conectar el remoto.
+Las imágenes externas utilizadas se documentan en [IMAGE_CREDITS.md](./IMAGE_CREDITS.md).
