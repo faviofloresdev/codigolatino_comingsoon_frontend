@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { LegalPage } from '@/components/legal-page'
 import { SiteShell } from '@/components/site-shell'
 import { Locale, isLocale } from '@/lib/i18n'
+import { buildPageMetadata } from '@/lib/seo'
 
 interface PageProps {
   params: Promise<{ locale: string }>
@@ -140,13 +141,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale: routeLocale } = await params
   const locale: Locale = isLocale(routeLocale) ? routeLocale : 'es'
 
-  return {
-    title: locale === 'es' ? 'Política de privacidad | Código Latino' : 'Privacy policy | Codigo Latino',
+  return buildPageMetadata({
+    locale,
+    path: '/privacidad',
+    title: locale === 'es' ? 'Política de privacidad' : 'Privacy policy',
     description:
       locale === 'es'
         ? 'Información sobre el tratamiento de datos personales en el sitio de Código Latino.'
         : 'Information about personal data processing on the Codigo Latino website.',
-  }
+  })
 }
 
 export default async function PrivacyPage({ params }: PageProps) {

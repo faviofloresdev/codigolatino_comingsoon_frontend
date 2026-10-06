@@ -4,6 +4,7 @@ import { ProjectProcess } from '@/components/project-process'
 import { ProjectSubmission } from '@/components/project-submission'
 import { SiteShell } from '@/components/site-shell'
 import { isLocale, Locale } from '@/lib/i18n'
+import { buildPageMetadata } from '@/lib/seo'
 
 interface PageProps {
   params: Promise<{ locale: string }>
@@ -12,12 +13,15 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale: routeLocale } = await params
   const locale: Locale = isLocale(routeLocale) ? routeLocale : 'es'
-  return {
-    title: locale === 'es' ? 'Enviar solicitud | Codigo Latino' : 'Submit request | Codigo Latino',
+  return buildPageMetadata({
+    locale,
+    path: '/solicitud',
+    title: locale === 'es' ? 'Enviar solicitud | Código Latino' : 'Submit request | Codigo Latino',
     description: locale === 'es'
       ? 'Revisa y envía la información de tu proyecto a Codigo Latino.'
       : 'Review and submit your project information to Codigo Latino.',
-  }
+    index: false,
+  })
 }
 
 export default async function SubmissionPage({ params }: PageProps) {

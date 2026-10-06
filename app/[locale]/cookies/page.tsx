@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation'
 import { LegalPage } from '@/components/legal-page'
 import { SiteShell } from '@/components/site-shell'
 import { Locale, isLocale } from '@/lib/i18n'
+import { buildPageMetadata } from '@/lib/seo'
 
 interface PageProps {
   params: Promise<{ locale: string }>
@@ -120,13 +121,15 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { locale: routeLocale } = await params
   const locale: Locale = isLocale(routeLocale) ? routeLocale : 'es'
 
-  return {
-    title: locale === 'es' ? 'Política de cookies | Código Latino' : 'Cookie policy | Codigo Latino',
+  return buildPageMetadata({
+    locale,
+    path: '/cookies',
+    title: locale === 'es' ? 'Política de cookies' : 'Cookie policy',
     description:
       locale === 'es'
         ? 'Información y preferencias sobre cookies y tecnologías de medición utilizadas por Código Latino.'
         : 'Information and preferences for cookies and measurement technologies used by Codigo Latino.',
-  }
+  })
 }
 
 export default async function CookiePolicyPage({ params }: PageProps) {

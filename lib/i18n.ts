@@ -39,7 +39,7 @@ type Translation = {
 
 export const translations: Record<Locale, Translation> = {
   es: {
-    metaTitle: 'Codigo Latino | Web a medida, hosting y branding',
+    metaTitle: 'Código Latino | Web a medida, hosting y branding',
     metaDescription:
       'Creamos sitios web, branding y hosting administrado para marcas que necesitan una presencia digital clara, mantenible y lista para crecer.',
     brandName: 'Codigo Latino',

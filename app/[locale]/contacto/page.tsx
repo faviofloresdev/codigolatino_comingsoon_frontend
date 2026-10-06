@@ -4,6 +4,7 @@ import { ContactSection } from '@/components/contact-section'
 import { Reveal } from '@/components/reveal'
 import { SiteShell } from '@/components/site-shell'
 import { isLocale, Locale } from '@/lib/i18n'
+import { buildPageMetadata } from '@/lib/seo'
 
 interface PageProps {
   params: Promise<{ locale: string }>
@@ -12,12 +13,14 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale: routeLocale } = await params
   const locale: Locale = isLocale(routeLocale) ? routeLocale : 'es'
-  return {
-    title: locale === 'es' ? 'Contacto | Codigo Latino' : 'Contact | Codigo Latino',
+  return buildPageMetadata({
+    locale,
+    path: '/contacto',
+    title: locale === 'es' ? 'Contacto | Código Latino' : 'Contact | Codigo Latino',
     description: locale === 'es'
       ? 'Cuéntanos qué necesitas construir o mejorar y definamos el siguiente paso de tu proyecto digital.'
       : 'Tell us what you need to build or improve and let us define the next step for your digital project.',
-  }
+  })
 }
 
 export default async function ContactPage({ params }: PageProps) {

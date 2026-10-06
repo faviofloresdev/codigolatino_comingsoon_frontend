@@ -4,6 +4,7 @@ import { ProjectBrief } from '@/components/project-brief'
 import { ProjectProcess } from '@/components/project-process'
 import { SiteShell } from '@/components/site-shell'
 import { Locale, isLocale } from '@/lib/i18n'
+import { buildPageMetadata } from '@/lib/seo'
 
 interface PageProps {
   params: Promise<{ locale: string }>
@@ -12,12 +13,15 @@ interface PageProps {
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { locale: routeLocale } = await params
   const locale: Locale = isLocale(routeLocale) ? routeLocale : 'es'
-  return {
-    title: locale === 'es' ? 'Brief del proyecto | Codigo Latino' : 'Project brief | Codigo Latino',
+  return buildPageMetadata({
+    locale,
+    path: '/brief',
+    title: locale === 'es' ? 'Brief del proyecto | Código Latino' : 'Project brief | Codigo Latino',
     description: locale === 'es'
       ? 'Comparte el contexto necesario para convertir tu estimación en una propuesta de proyecto.'
       : 'Share the context needed to turn your estimate into a project proposal.',
-  }
+    index: false,
+  })
 }
 
 export default async function BriefPage({ params }: PageProps) {
