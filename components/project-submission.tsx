@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { ArrowLeft, Check, Download, LoaderCircle, Pencil } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { ContactForm } from '@/components/contact-form'
-import { generateEstimatePdf } from '@/lib/generate-estimate-pdf'
+import { generateEstimatePdf, type EstimatePdfSection } from '@/lib/generate-estimate-pdf'
 import { Locale, translations } from '@/lib/i18n'
 
 type Quote = {
@@ -24,6 +24,17 @@ type Quote = {
 
 type Brief = Record<string, string | string[]>
 
+const briefChoiceLabels = {
+  es: {
+    visualStyle: { minimal: 'Minimalista', warm: 'Cálida', modern: 'Tecnológica', classic: 'Clásica', fresh: 'Fresca', bold: 'Expresiva' },
+    typography: { serif: 'Serif', 'sans-serif': 'Sans serif', script: 'Caligráfica', display: 'Display', open: 'Sin preferencia' },
+  },
+  en: {
+    visualStyle: { minimal: 'Minimal', warm: 'Warm', modern: 'Technology-led', classic: 'Classic', fresh: 'Fresh', bold: 'Expressive' },
+    typography: { serif: 'Serif', 'sans-serif': 'Sans serif', script: 'Script', display: 'Display', open: 'No preference' },
+  },
+} as const
+
 function formatMoney(value: number) {
   return `US$${new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(value)}`
 }
@@ -31,6 +42,15 @@ function formatMoney(value: number) {
 function textValue(value: string | string[] | undefined, fallback: string) {
   if (Array.isArray(value)) return value.length ? value.join(', ') : fallback
   return value || fallback
+}
+
+function choiceValue(
+  value: string | string[] | undefined,
+  labels: Record<string, string>,
+  fallback: string,
+) {
+  if (!Array.isArray(value) || value.length === 0) return fallback
+  return value.map((item) => labels[item] || item).join(', ')
 }
 
 export function ProjectSubmission({ locale }: { locale: Locale }) {
@@ -89,6 +109,65 @@ export function ProjectSubmission({ locale }: { locale: Locale }) {
     [locale === 'es' ? 'Publicación' : 'Launch', textValue(brief.deadlineLabel, empty)],
   ] : []
 
+  const choiceLabels = briefChoiceLabels[locale]
+  const briefSections: EstimatePdfSection[] = brief ? [
+    {
+      title: locale === 'es' ? 'Empresa' : 'Business',
+      fields: [
+        { label: locale === 'es' ? 'Negocio o proyecto' : 'Business or project', value: textValue(brief.business, empty) },
+        { label: locale === 'es' ? 'Valores de marca' : 'Brand values', value: textValue(brief.brandValues, empty) },
+        { label: locale === 'es' ? 'Diferenciadores' : 'Differentiators', value: textValue(brief.differentiators, empty) },
+        { label: locale === 'es' ? 'Percepción deseada' : 'Desired perception', value: textValue(brief.brandPerception, empty) },
+      ],
+    },
+    {
+      title: locale === 'es' ? 'Público y competencia' : 'Audience and competition',
+      fields: [
+        { label: locale === 'es' ? 'Audiencia' : 'Audience', value: textValue(brief.audience, empty) },
+        { label: locale === 'es' ? 'Competidores o alternativas' : 'Competitors or alternatives', value: textValue(brief.competitors, empty) },
+      ],
+    },
+    {
+      title: locale === 'es' ? 'Objetivo del proyecto' : 'Project objective',
+      fields: [
+        { label: locale === 'es' ? 'Objetivo principal' : 'Primary objective', value: textValue(brief.objectiveLabel || brief.objective, empty) },
+        { label: locale === 'es' ? 'Acción principal' : 'Primary action', value: textValue(brief.primaryActionLabel || brief.primaryAction, empty) },
+        { label: locale === 'es' ? 'Criterio de éxito' : 'Success criteria', value: textValue(brief.successCriteria, empty) },
+      ],
+    },
+    {
+      title: locale === 'es' ? 'Identidad visual' : 'Visual identity',
+      fields: [
+        { label: locale === 'es' ? 'Estado de la identidad' : 'Identity status', value: textValue(brief.brandAssetsLabel || brief.brandAssets, empty) },
+        { label: locale === 'es' ? 'Colores y restricciones' : 'Colors and restrictions', value: textValue(brief.brandColors, empty) },
+        {
+          label: locale === 'es' ? 'Sensación visual' : 'Visual feel',
+          value: textValue(brief.visualStyleLabels, choiceValue(brief.visualStyle, choiceLabels.visualStyle, empty)),
+        },
+        {
+          label: locale === 'es' ? 'Dirección tipográfica' : 'Typography direction',
+          value: textValue(brief.typographyLabels, choiceValue(brief.typography, choiceLabels.typography, empty)),
+        },
+      ],
+    },
+    {
+      title: locale === 'es' ? 'Contenido y referencias' : 'Content and references',
+      fields: [
+        { label: locale === 'es' ? 'Estado del contenido' : 'Content status', value: textValue(brief.contentStatusLabel || brief.contentStatus, empty) },
+        { label: locale === 'es' ? 'Sitio web actual' : 'Current website', value: textValue(brief.currentSite, empty) },
+        { label: locale === 'es' ? 'Referencias' : 'References', value: textValue(brief.references, empty) },
+      ],
+    },
+    {
+      title: locale === 'es' ? 'Alcance y expectativas' : 'Scope and expectations',
+      fields: [
+        { label: locale === 'es' ? 'Fecha ideal de publicación' : 'Ideal launch date', value: textValue(brief.deadlineLabel || brief.deadline, empty) },
+        { label: locale === 'es' ? 'Responsable de aprobación' : 'Decision maker', value: textValue(brief.decisionMaker, empty) },
+        { label: locale === 'es' ? 'Requisitos y comentarios' : 'Requirements and comments', value: textValue(brief.requirements, empty) },
+      ],
+    },
+  ] : []
+
   async function downloadEstimate() {
     if (!quote || typeof quote.total !== 'number') return
 
@@ -117,6 +196,7 @@ export function ProjectSubmission({ locale }: { locale: Locale }) {
         seoPrice: locale === 'es' ? 'US$70 / mes' : 'US$70 / month',
         total: formatMoney(quote.total),
         range: `${formatMoney(quote.rangeLow || quote.total)} - ${formatMoney(quote.rangeHigh || quote.total)}`,
+        briefSections,
       })
     } finally {
       setIsDownloading(false)
