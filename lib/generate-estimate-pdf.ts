@@ -6,6 +6,14 @@ type EstimateItem = {
   meta?: string
 }
 
+export type EstimatePdfSection = {
+  title: string
+  fields: Array<{
+    label: string
+    value: string
+  }>
+}
+
 export type EstimatePdfData = {
   locale: 'es' | 'en'
   project: EstimateItem
@@ -21,6 +29,7 @@ export type EstimatePdfData = {
   seoPrice: string
   total: string
   range: string
+  briefSections: EstimatePdfSection[]
 }
 
 const colors = {
@@ -62,6 +71,10 @@ const documentCopy = {
     next: 'SIGUIENTE PASO',
     nextTitle: 'Completa el brief del proyecto.',
     nextBody: 'Con esa información validamos objetivos, contenido e integraciones para preparar una propuesta final.',
+    briefEyebrow: 'BRIEF DEL PROYECTO',
+    briefTitle: 'El contexto detrás del alcance.',
+    briefIntro: 'Información proporcionada durante el proceso para orientar la propuesta final.',
+    continuation: 'Continuación',
     disclaimer: 'No constituye una oferta contractual. El importe puede variar según objetivos, contenido, integraciones y requerimientos técnicos.',
     generated: 'Documento generado desde codigolatino.studio',
   },
@@ -89,6 +102,10 @@ const documentCopy = {
     next: 'NEXT STEP',
     nextTitle: 'Complete the project brief.',
     nextBody: 'We use that information to validate goals, content and integrations before preparing the final proposal.',
+    briefEyebrow: 'PROJECT BRIEF',
+    briefTitle: 'The context behind the scope.',
+    briefIntro: 'Information provided during the process to guide the final proposal.',
+    continuation: 'Continuation',
     disclaimer: 'This is not a contractual offer. The amount may vary according to goals, content, integrations and technical requirements.',
     generated: 'Document generated from codigolatino.studio',
   },
@@ -169,6 +186,14 @@ function drawScopeItem(doc: JsPDF, item: EstimateItem, x: number, y: number, wid
   }
 }
 
+function addPaperPage(doc: JsPDF, logo: string | null) {
+  doc.addPage()
+  doc.setFillColor(colors.paper)
+  doc.rect(0, 0, 210, 297, 'F')
+  addBrandRule(doc)
+  addBrandMark(doc, logo)
+}
+
 export async function generateEstimatePdf(data: EstimatePdfData) {
   const [{ jsPDF }, logo] = await Promise.all([import('jspdf'), loadLogo()])
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4', compress: true })
@@ -231,13 +256,7 @@ export async function generateEstimatePdf(data: EstimatePdfData) {
   doc.setFontSize(10)
   doc.setTextColor(colors.white)
   doc.text(doc.splitTextToSize(text.notice, 154), 28, 230, { lineHeightFactor: 1.55 })
-  addFooter(doc, '01 / 02', text.generated, true)
-
-  doc.addPage()
-  doc.setFillColor(colors.paper)
-  doc.rect(0, 0, 210, 297, 'F')
-  addBrandRule(doc)
-  addBrandMark(doc, logo)
+  addPaperPage(doc, logo)
 
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(24)
@@ -347,7 +366,114 @@ export async function generateEstimatePdf(data: EstimatePdfData) {
   doc.setFontSize(6.5)
   doc.setTextColor(colors.muted)
   doc.text(doc.splitTextToSize(text.disclaimer, 155), 18, 271)
-  addFooter(doc, '02 / 02', text.generated)
+  if (data.briefSections.length > 0) {
+    const contentBottom = 270
+    const valueLineHeight = 4.4
+    let y = 0
+    let briefPage = 0
+
+    const startBriefPage = () => {
+      addPaperPage(doc, logo)
+      briefPage += 1
+
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(7)
+      doc.setCharSpace(1.3)
+      doc.setTextColor(colors.coral)
+      doc.text(text.briefEyebrow, 18, 39)
+      doc.setCharSpace(0)
+
+      doc.setFontSize(briefPage === 1 ? 23 : 18)
+      doc.setTextColor(colors.ink)
+      doc.text(briefPage === 1 ? text.briefTitle : `${text.briefTitle} · ${text.continuation}`, 18, 50)
+
+      if (briefPage === 1) {
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(8.5)
+        doc.setTextColor(colors.muted)
+        doc.text(doc.splitTextToSize(text.briefIntro, 174), 18, 59, { lineHeightFactor: 1.4 })
+        y = 75
+      } else {
+        y = 63
+      }
+    }
+
+    const ensureSpace = (height: number) => {
+      if (y + height > contentBottom) startBriefPage()
+    }
+
+    const drawField = (label: string, value: string) => {
+      let lines = doc.splitTextToSize(value, 174) as string[]
+      let continuation = false
+      const completeFieldHeight = 19 + lines.length * valueLineHeight
+      const availableOnFreshPage = contentBottom - 63
+
+      if (completeFieldHeight <= availableOnFreshPage && y + completeFieldHeight > contentBottom) {
+        startBriefPage()
+      }
+
+      do {
+        ensureSpace(16)
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(6.8)
+        doc.setCharSpace(0.9)
+        doc.setTextColor(colors.muted)
+        doc.text(continuation ? `${label} · ${text.continuation}` : label, 18, y)
+        doc.setCharSpace(0)
+        y += 7
+
+        const availableLines = Math.max(1, Math.floor((contentBottom - y - 5) / valueLineHeight))
+        const currentLines = lines.splice(0, availableLines)
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(9.2)
+        doc.setTextColor(colors.ink)
+        doc.text(currentLines, 18, y, { lineHeightFactor: 1.35 })
+        y += currentLines.length * valueLineHeight + 5
+
+        doc.setDrawColor(colors.line)
+        doc.line(18, y, 192, y)
+        y += 7
+
+        if (lines.length > 0) {
+          startBriefPage()
+          continuation = true
+        }
+      } while (lines.length > 0)
+    }
+
+    startBriefPage()
+    data.briefSections.forEach((section, sectionIndex) => {
+      const firstFieldLines = section.fields[0]
+        ? (doc.splitTextToSize(section.fields[0].value, 174) as string[]).length
+        : 0
+      const firstFieldHeight = Math.min(55, 19 + firstFieldLines * valueLineHeight)
+      ensureSpace(12 + firstFieldHeight)
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(7)
+      doc.setCharSpace(1.1)
+      doc.setTextColor(colors.emerald)
+      doc.text(String(sectionIndex + 1).padStart(2, '0'), 18, y)
+      doc.setCharSpace(0)
+      doc.setFontSize(13)
+      doc.setTextColor(colors.ink)
+      doc.text(section.title, 31, y)
+      y += 12
+
+      section.fields.forEach((field) => drawField(field.label, field.value))
+      y += 3
+    })
+  }
+
+  const totalPages = doc.getNumberOfPages()
+  for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
+    doc.setPage(pageNumber)
+    addFooter(
+      doc,
+      `${String(pageNumber).padStart(2, '0')} / ${String(totalPages).padStart(2, '0')}`,
+      text.generated,
+      pageNumber === 1,
+    )
+  }
 
   const date = new Date().toISOString().slice(0, 10)
   doc.save(`codigo-latino-${data.locale === 'es' ? 'estimacion' : 'estimate'}-${date}.pdf`)

@@ -134,6 +134,12 @@ export function ProjectBrief({ locale }: { locale: Locale }) {
     const brandAssetsLabel = choices.assets.find(([value]) => value === nextData.brandAssets)?.[1] || ''
     const contentStatusLabel = choices.content.find(([value]) => value === nextData.contentStatus)?.[1] || ''
     const deadlineLabel = choices.deadline.find(([value]) => value === nextData.deadline)?.[1] || ''
+    const visualStyleLabels = choices.styles
+      .filter(([value]) => (nextData.visualStyle as string[]).includes(value))
+      .map(([, label]) => label)
+    const typographyLabels = choices.typography
+      .filter(([value]) => (nextData.typography as string[]).includes(value))
+      .map(([, label]) => label)
     window.localStorage.setItem('codigo-latino-brief-v2', JSON.stringify({
       ...nextData,
       objectiveLabel,
@@ -141,6 +147,8 @@ export function ProjectBrief({ locale }: { locale: Locale }) {
       brandAssetsLabel,
       contentStatusLabel,
       deadlineLabel,
+      visualStyleLabels,
+      typographyLabels,
       locale,
       updatedAt: new Date().toISOString(),
     }))
