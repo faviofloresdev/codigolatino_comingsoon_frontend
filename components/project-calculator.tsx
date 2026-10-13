@@ -38,7 +38,7 @@ const copy = {
     intro: 'Explora combinaciones, entiende qué mueve la inversión y llega a la primera conversación con una base más clara.',
     estimate: 'Estimado en vivo',
     reset: 'Reiniciar',
-    investment: 'Inversión estimada',
+    investment: 'Inversión inicial estimada',
     range: 'Rango orientativo',
     scope: 'Nivel de alcance',
     scopeLabels: ['Esencial', 'Intermedio', 'Avanzado'],
@@ -65,14 +65,16 @@ const copy = {
     bundle: 'Ajuste por combinación',
     delivery: 'Ritmo de entrega',
     hosting: 'Soporte y hosting administrado',
+    hostingFirstMonth: 'Hosting administrado · primer mes',
     seoIncluded: 'SEO técnico inicial incluido',
     seoIncludedDetail: 'Estructura, metadata e indexación configuradas desde el lanzamiento.',
     seoAnalysis: 'Análisis SEO continuo',
+    seoFirstMonth: 'Análisis SEO continuo · primer mes',
     seoAnalysisDetail: 'Seguimiento, revisión de rendimiento y recomendaciones periódicas.',
     optional: 'Publicación, monitoreo y soporte técnico mensual.',
     monthly: '/ mes',
     cta: 'Continuar al brief',
-    referenceNotice: 'Precios referenciales. Al completar el brief y enviar la solicitud, revisaremos el alcance y te enviaremos el plan final del proyecto.',
+    referenceNotice: 'El total incorpora el primer mes de los servicios seleccionados. Después continúan como cargos mensuales. Los precios son referenciales y el plan final se confirma tras revisar el brief.',
     disclaimer: 'La cifra mostrada no constituye una oferta contractual. Puede variar según objetivos, contenido, integraciones y requerimientos técnicos.',
     from: 'Desde',
     removePage: 'Quitar una página',
@@ -84,7 +86,7 @@ const copy = {
     intro: 'Explore combinations, understand what moves the investment and start the first conversation with a clearer foundation.',
     estimate: 'Live estimate',
     reset: 'Reset',
-    investment: 'Estimated investment',
+    investment: 'Estimated initial investment',
     range: 'Suggested range',
     scope: 'Scope level',
     scopeLabels: ['Essential', 'Intermediate', 'Advanced'],
@@ -111,14 +113,16 @@ const copy = {
     bundle: 'Bundle adjustment',
     delivery: 'Delivery pace',
     hosting: 'Managed support and hosting',
+    hostingFirstMonth: 'Managed hosting · first month',
     seoIncluded: 'Initial technical SEO included',
     seoIncludedDetail: 'Structure, metadata and indexing configured from launch.',
     seoAnalysis: 'Ongoing SEO analysis',
+    seoFirstMonth: 'Ongoing SEO analysis · first month',
     seoAnalysisDetail: 'Monitoring, performance review and periodic recommendations.',
     optional: 'Deployment, monitoring and monthly technical support.',
     monthly: '/ month',
     cta: 'Continue to brief',
-    referenceNotice: 'Reference pricing. Once you complete the brief and submit the request, we will review the scope and send you the final project plan.',
+    referenceNotice: 'The total includes the first month of selected services. They continue as monthly charges afterward. Pricing is indicative and the final plan is confirmed after we review the brief.',
     disclaimer: 'The displayed amount is not a contractual offer. It may vary according to goals, content, integrations and technical requirements.',
     from: 'From',
     removePage: 'Remove one page',
@@ -223,11 +227,13 @@ export function ProjectCalculator({ locale }: { locale: Locale }) {
   const bundleDiscount = Math.round((featuresCost + extrasCost) * bundleRate)
   const subtotal = baseBeforeDesign + designCost + featuresCost + extrasCost - bundleDiscount
   const timingCost = Math.round(subtotal * (PRICING.timing[timing] - 1))
-  const total = Math.round((subtotal + timingCost) / 10) * 10
-  const rangeLow = Math.round((total * 0.92) / 10) * 10
-  const rangeHigh = Math.round((total * 1.08) / 10) * 10
-  const scopePercent = Math.min(100, Math.max(12, (total / 2600) * 100))
-  const scopeLabel = total < 700 ? text.scopeLabels[0] : total < 1500 ? text.scopeLabels[1] : text.scopeLabels[2]
+  const projectTotal = Math.round((subtotal + timingCost) / 10) * 10
+  const monthlyServicesTotal = (maintenance ? PRICING.maintenance : 0) + (seoAnalysis ? PRICING.seoAnalysis : 0)
+  const total = projectTotal + monthlyServicesTotal
+  const rangeLow = Math.round((projectTotal * 0.92) / 10) * 10 + monthlyServicesTotal
+  const rangeHigh = Math.round((projectTotal * 1.08) / 10) * 10 + monthlyServicesTotal
+  const scopePercent = Math.min(100, Math.max(12, (projectTotal / 2600) * 100))
+  const scopeLabel = projectTotal < 700 ? text.scopeLabels[0] : projectTotal < 1500 ? text.scopeLabels[1] : text.scopeLabels[2]
 
   function toggleItem<T extends string>(item: T, values: T[], setter: (next: T[]) => void) {
     setter(values.includes(item) ? values.filter((value) => value !== item) : [...values, item])
@@ -272,6 +278,8 @@ export function ProjectCalculator({ locale }: { locale: Locale }) {
     ...(extrasCost ? [[text.launchServices, extrasCost] as const] : []),
     ...(bundleDiscount ? [[text.bundle, -bundleDiscount] as const] : []),
     ...(timingCost ? [[text.delivery, timingCost] as const] : []),
+    ...(maintenance ? [[text.hostingFirstMonth, PRICING.maintenance] as const] : []),
+    ...(seoAnalysis ? [[text.seoFirstMonth, PRICING.seoAnalysis] as const] : []),
   ]
 
   return (
